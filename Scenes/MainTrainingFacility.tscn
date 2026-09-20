@@ -1,0 +1,329 @@
+[gd_scene format=3 uid="uid://b5m8yap3c4q2k"]
+
+[ext_resource type="Texture2D" uid="uid://bk8s0364iuhtw" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_dark_floor"]
+[ext_resource type="Texture2D" uid="uid://c3sqxjnpav4pf" path="res://addons/kenney_prototype_textures/light/texture_07.png" id="2_wall_tex"]
+[ext_resource type="Texture2D" uid="uid://bqv6cnhx78fym" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="3_hazard_tex"]
+[ext_resource type="PackedScene" uid="uid://b3p8qm6jkv801" path="res://Scenes/Player/xr_player.tscn" id="5_xrplayer"]
+[ext_resource type="PackedScene" uid="uid://c1qpymnrp5vh8" path="res://Scenes/Templates/forklift.tscn" id="6_forklift"]
+[ext_resource type="PackedScene" uid="uid://c6vx12543qmba" path="res://Scenes/Props/traffic_cone.tscn" id="7_traffic_cone"]
+[ext_resource type="PackedScene" uid="uid://beo7xhnaxqpis" path="res://Scenes/Templates/pallet_base.tscn" id="8_pallet_base"]
+[ext_resource type="PackedScene" uid="uid://ujy77teadgii" path="res://Scenes/Templates/pallet_drum_type0.tscn" id="9_pallet_drum0"]
+[ext_resource type="PackedScene" uid="uid://d04wpnnoomikg" path="res://Scenes/Templates/pallet_drum_type1.tscn" id="10_pallet_drum1"]
+[ext_resource type="PackedScene" uid="uid://c8n4y2w6j1wax" path="res://Scenes/Props/inspection_checkpoint.tscn" id="11_checkpoint"]
+[ext_resource type="PackedScene" uid="uid://b2m4k6w8p1q7v" path="res://Scenes/Props/pallet_rack.tscn" id="12_rack"]
+[ext_resource type="Script" uid="uid://khkdeoxm6a1e" path="res://Scripts/Training/training_manager.gd" id="13_mgr"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_daylight"]
+sky_top_color = Color(0.35, 0.55, 0.92, 1)
+sky_horizon_color = Color(0.65, 0.75, 0.85, 1)
+ground_bottom_color = Color(0.2, 0.22, 0.25, 1)
+ground_horizon_color = Color(0.55, 0.62, 0.68, 1)
+
+[sub_resource type="Sky" id="Sky_daylight"]
+sky_material = SubResource("ProceduralSkyMaterial_daylight")
+
+[sub_resource type="Environment" id="Environment_warehouse_bright"]
+background_mode = 2
+sky = SubResource("Sky_daylight")
+ambient_light_source = 3
+ambient_light_color = Color(0.85, 0.9, 0.95, 1)
+ambient_light_energy = 1.5
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_texture = ExtResource("1_dark_floor")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = SubResource("StandardMaterial3D_floor")
+size = Vector3(70, 1, 55)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(70, 1, 55)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
+albedo_texture = ExtResource("2_wall_tex")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pickup_zone"]
+albedo_texture = ExtResource("3_hazard_tex")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_barrier"]
+albedo_texture = ExtResource("3_hazard_tex")
+uv1_scale = Vector3(1, 0.5, 1)
+uv1_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_barrier_wide"]
+size = Vector3(12, 2.2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_barrier_stall"]
+size = Vector3(6, 2.2, 0.3)
+
+[node name="MainTrainingFacility" type="Node3D" unique_id=1939307885]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=131660506]
+environment = SubResource("Environment_warehouse_bright")
+
+[node name="SunLight" type="DirectionalLight3D" parent="WorldEnvironment" unique_id=2015064707]
+transform = Transform3D(-0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, 0.5, -0.5, 15, 25, 15)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.8
+shadow_enabled = true
+
+[node name="WarehouseArchitecture" type="Node3D" parent="." unique_id=1303394174]
+
+[node name="Floor" type="StaticBody3D" parent="WarehouseArchitecture" unique_id=861458255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WarehouseArchitecture/Floor" unique_id=1872470985]
+mesh = SubResource("BoxMesh_floor")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WarehouseArchitecture/Floor" unique_id=827600294]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="NorthWall" type="CSGBox3D" parent="WarehouseArchitecture" unique_id=1633329032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -27.5)
+use_collision = true
+size = Vector3(70, 7, 1)
+material = SubResource("StandardMaterial3D_wall")
+
+[node name="SouthWall" type="CSGBox3D" parent="WarehouseArchitecture" unique_id=197338010]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 27.5)
+use_collision = true
+size = Vector3(70, 7, 1)
+material = SubResource("StandardMaterial3D_wall")
+
+[node name="EastWall" type="CSGBox3D" parent="WarehouseArchitecture" unique_id=1557418574]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 3.5, 0)
+use_collision = true
+size = Vector3(1, 7, 55)
+material = SubResource("StandardMaterial3D_wall")
+
+[node name="WestWall" type="CSGBox3D" parent="WarehouseArchitecture" unique_id=1079716857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 3.5, 0)
+use_collision = true
+size = Vector3(1, 7, 55)
+material = SubResource("StandardMaterial3D_wall")
+
+[node name="FloorMarkings" type="Node3D" parent="." unique_id=1699769452]
+
+[node name="PickupZoneDecal" type="CSGBox3D" parent="FloorMarkings" unique_id=945545758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -14)
+size = Vector3(12, 0.02, 6)
+material = SubResource("StandardMaterial3D_pickup_zone")
+
+[node name="PickupZoneLabel" type="Label3D" parent="FloorMarkings/PickupZoneDecal" unique_id=941459648]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.02, 0)
+modulate = Color(1, 0.8, 0, 1)
+text = "PALLET PICKUP STAGING AREA (GROUND)"
+font_size = 36
+
+[node name="DropZoneOutline" type="CSGBox3D" parent="FloorMarkings" unique_id=1115462267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, -14)
+size = Vector3(6, 0.02, 6)
+material = SubResource("StandardMaterial3D_barrier")
+
+[node name="ParkingBayDecal" type="CSGBox3D" parent="FloorMarkings" unique_id=1758988636]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, 12)
+size = Vector3(6, 0.02, 8)
+material = SubResource("StandardMaterial3D_pickup_zone")
+
+[node name="ParkingBayLabel" type="Label3D" parent="FloorMarkings/ParkingBayDecal" unique_id=1797527809]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.02, 0)
+modulate = Color(1, 0.8, 0, 1)
+text = "FORKLIFT PARKING BAY"
+font_size = 36
+
+[node name="SlalomLaneLineLeft" type="CSGBox3D" parent="FloorMarkings" unique_id=1869970154]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.01, 0)
+size = Vector3(0.15, 0.02, 18)
+material = SubResource("StandardMaterial3D_pickup_zone")
+
+[node name="SlalomLaneLineRight" type="CSGBox3D" parent="FloorMarkings" unique_id=1644307819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.01, 0)
+size = Vector3(0.15, 0.02, 18)
+material = SubResource("StandardMaterial3D_pickup_zone")
+
+[node name="StageBarriers" type="Node3D" parent="." unique_id=2012192152]
+
+[node name="Barrier_ForkliftBay" type="StaticBody3D" parent="StageBarriers" unique_id=1442053989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 9.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StageBarriers/Barrier_ForkliftBay" unique_id=1782381434]
+shape = SubResource("BoxShape3D_barrier_wide")
+
+[node name="Mesh" type="CSGBox3D" parent="StageBarriers/Barrier_ForkliftBay" unique_id=2063807453]
+size = Vector3(12, 2.2, 0.3)
+material = SubResource("StandardMaterial3D_barrier")
+
+[node name="Label" type="Label3D" parent="StageBarriers/Barrier_ForkliftBay" unique_id=2077065160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.2)
+modulate = Color(1, 0.9, 0.2, 1)
+text = "TRAINING ZONE CLOSED - COMPLETE INSPECTION FIRST"
+font_size = 28
+
+[node name="Barrier_SlalomExit" type="StaticBody3D" parent="StageBarriers" unique_id=733416465]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -8.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StageBarriers/Barrier_SlalomExit" unique_id=51696186]
+shape = SubResource("BoxShape3D_barrier_wide")
+
+[node name="Mesh" type="CSGBox3D" parent="StageBarriers/Barrier_SlalomExit" unique_id=1966238221]
+size = Vector3(12, 2.2, 0.3)
+material = SubResource("StandardMaterial3D_barrier")
+
+[node name="Label" type="Label3D" parent="StageBarriers/Barrier_SlalomExit" unique_id=1192383827]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.2)
+modulate = Color(1, 0.9, 0.2, 1)
+text = "CARGO AREA CLOSED - COMPLETE SLALOM DRIVING FIRST"
+font_size = 28
+
+[node name="Barrier_ParkingBay" type="StaticBody3D" parent="StageBarriers" unique_id=1847602323]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1.1, 7.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StageBarriers/Barrier_ParkingBay" unique_id=676434326]
+shape = SubResource("BoxShape3D_barrier_stall")
+
+[node name="Mesh" type="CSGBox3D" parent="StageBarriers/Barrier_ParkingBay" unique_id=173358288]
+size = Vector3(6, 2.2, 0.3)
+material = SubResource("StandardMaterial3D_barrier")
+
+[node name="Label" type="Label3D" parent="StageBarriers/Barrier_ParkingBay" unique_id=1580991180]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.2)
+modulate = Color(1, 0.9, 0.2, 1)
+text = "PARKING BAY RESERVED - COMPLETE CARGO MISSION FIRST"
+font_size = 22
+
+[node name="Forklift" parent="." unique_id=800243629 groups=["forklift"] instance=ExtResource("6_forklift")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="XRPlayer" parent="." unique_id=888941897 instance=ExtResource("5_xrplayer")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4, 0.05, 11.75)
+
+[node name="InspectionCheckpoints" type="Node3D" parent="." unique_id=1255178422]
+
+[node name="Checkpoint_FrontMast" parent="InspectionCheckpoints" unique_id=27790314 instance=ExtResource("11_checkpoint")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14.8)
+checkpoint_title = "Mast & Forks Inspection"
+
+[node name="Checkpoint_LeftTires" parent="InspectionCheckpoints" unique_id=2134711512 instance=ExtResource("11_checkpoint")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0, 12)
+checkpoint_id = "Left_Tires"
+checkpoint_title = "Tires & Lug Nuts"
+
+[node name="Checkpoint_RearCounterweight" parent="InspectionCheckpoints" unique_id=942866691 instance=ExtResource("11_checkpoint")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.2)
+checkpoint_id = "Rear_Counterweight"
+checkpoint_title = "Rear Counterweight & Radiator"
+
+[node name="Checkpoint_CabGuard" parent="InspectionCheckpoints" unique_id=846333953 instance=ExtResource("11_checkpoint")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 12)
+checkpoint_id = "Cab_Guard"
+checkpoint_title = "Overhead Guard & Cab Controls"
+
+[node name="SlalomCones" type="Node3D" parent="." unique_id=1346441895]
+
+[node name="Cone1" parent="SlalomCones" unique_id=858315074 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.05, 6)
+
+[node name="Cone2" parent="SlalomCones" unique_id=1784228437 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.05, 3)
+
+[node name="Cone3" parent="SlalomCones" unique_id=790994297 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.05, 0)
+
+[node name="Cone4" parent="SlalomCones" unique_id=765249576 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.05, -3)
+
+[node name="Cone5" parent="SlalomCones" unique_id=1957656589 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.05, -6)
+
+[node name="ConeBoundary1" parent="SlalomCones" unique_id=1559293224 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.05, 8)
+
+[node name="ConeBoundary2" parent="SlalomCones" unique_id=501175602 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.05, 8)
+
+[node name="ConeBoundary3" parent="SlalomCones" unique_id=2054757465 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.05, -8)
+
+[node name="ConeBoundary4" parent="SlalomCones" unique_id=1146789709 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.05, -8)
+
+[node name="ParkingCone1" parent="SlalomCones" unique_id=1959251735 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.05, 15.8)
+
+[node name="ParkingCone2" parent="SlalomCones" unique_id=1004488722 instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0.05, 15.8)
+
+[node name="StagedPallets" type="Node3D" parent="." unique_id=1441751551]
+
+[node name="Pallet_Base" parent="StagedPallets" unique_id=408288959 instance=ExtResource("8_pallet_base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -13.5)
+
+[node name="Pallet_Drum0" parent="StagedPallets" unique_id=405155157 instance=ExtResource("9_pallet_drum0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.1, -13.5)
+
+[node name="Pallet_Drum1" parent="StagedPallets" unique_id=1752870272 instance=ExtResource("10_pallet_drum1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.1, -13.5)
+
+[node name="DropZoneRack" parent="." unique_id=974440072 instance=ExtResource("12_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -14)
+
+[node name="StageMarkers" type="Node3D" parent="." unique_id=1430185361]
+
+[node name="Stage1_Inspection" type="Marker3D" parent="StageMarkers" unique_id=1794123653]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.2, 0.05, 13.5)
+
+[node name="Stage2_CabEntry" type="Marker3D" parent="StageMarkers" unique_id=30954781]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4, 0.05, 11.75)
+
+[node name="Stage3_Controls" type="Marker3D" parent="StageMarkers" unique_id=37039264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 12)
+
+[node name="Stage4_Slalom" type="Marker3D" parent="StageMarkers" unique_id=38584597]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 8.5)
+
+[node name="Stage5_CargoMission" type="Marker3D" parent="StageMarkers" unique_id=1852818567]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -9)
+
+[node name="Stage6_Parking" type="Marker3D" parent="StageMarkers" unique_id=1420937060]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.05, 6)
+
+[node name="Stage7_Complete" type="Marker3D" parent="StageMarkers" unique_id=584335272]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.05, 14)
+
+[node name="FacilityHUD" type="Node3D" parent="." unique_id=766347821]
+
+[node name="GuidanceBoard" type="CSGBox3D" parent="FacilityHUD" unique_id=1660717203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 18)
+size = Vector3(12, 2.4, 0.2)
+
+[node name="GuidanceDisplay" type="Label3D" parent="FacilityHUD/GuidanceBoard" unique_id=679809068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.15)
+modulate = Color(1, 0.9, 0.2, 1)
+text = "=== Stage 1: Pre-Operation Inspection ===
+Inspect all 4 yellow checkpoints around the forklift"
+font_size = 30
+outline_size = 8
+
+[node name="ScoreDisplay" type="Label3D" parent="FacilityHUD/GuidanceBoard" unique_id=1675896307]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, 0.15)
+modulate = Color(0.3, 1, 0.4, 1)
+text = "OSHA Score: 100 / 100 [PASS]  Time: 00:00"
+font_size = 26
+outline_size = 8
+
+[node name="TrainingManager" type="Node" parent="." unique_id=456680246 node_paths=PackedStringArray("player", "forklift", "stage_markers_root", "stage_barriers_root", "guidance_display", "score_display", "checkpoints_container")]
+script = ExtResource("13_mgr")
+player = NodePath("../XRPlayer")
+forklift = NodePath("../Forklift")
+stage_markers_root = NodePath("../StageMarkers")
+stage_barriers_root = NodePath("../StageBarriers")
+guidance_display = NodePath("../FacilityHUD/GuidanceBoard/GuidanceDisplay")
+score_display = NodePath("../FacilityHUD/GuidanceBoard/ScoreDisplay")
+checkpoints_container = NodePath("../InspectionCheckpoints")

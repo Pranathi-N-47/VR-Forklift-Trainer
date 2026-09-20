@@ -1,0 +1,67 @@
+[gd_scene load_steps=9 format=3 uid="uid://c6vx12543qmba"]
+
+[ext_resource type="Script" path="res://Scripts/Props/traffic_cone.gd" id="1_traffic_cone"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_orange"]
+albedo_color = Color(1, 0.28, 0, 1)
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_white"]
+albedo_color = Color(0.96, 0.96, 0.96, 1)
+roughness = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_base"]
+material = SubResource("StandardMaterial3D_orange")
+size = Vector3(0.4, 0.04, 0.4)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_body"]
+material = SubResource("StandardMaterial3D_orange")
+top_radius = 0.035
+bottom_radius = 0.16
+height = 0.72
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stripe"]
+material = SubResource("StandardMaterial3D_white")
+top_radius = 0.08
+bottom_radius = 0.11
+height = 0.18
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_cone"]
+height = 0.75
+radius = 0.2
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trigger"]
+height = 0.78
+radius = 0.24
+
+[node name="TrafficCone" type="RigidBody3D" groups=["traffic_cones"]]
+collision_layer = 4
+collision_mask = 7
+mass = 2.5
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_traffic_cone")
+
+[node name="BaseMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+mesh = SubResource("BoxMesh_base")
+
+[node name="ConeMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+mesh = SubResource("CylinderMesh_body")
+
+[node name="StripeMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("CylinderMesh_stripe")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
+shape = SubResource("CylinderShape3D_cone")
+
+[node name="HitArea" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 7
+
+[node name="TriggerCollision" type="CollisionShape3D" parent="HitArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0)
+shape = SubResource("CylinderShape3D_trigger")

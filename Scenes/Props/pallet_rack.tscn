@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://b2m4k6w8p1q7v"]
+
+[ext_resource type="Texture2D" uid="uid://c6s70e5b3u3im" path="res://addons/kenney_prototype_textures/green/texture_01.png" id="1_green_tex"]
+[ext_resource type="Texture2D" uid="uid://dnbpqv88y7i1h" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="2_orange_tex"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_post"]
+albedo_color = Color(0.15, 0.35, 0.75, 1)
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shelf"]
+albedo_texture = ExtResource("1_green_tex")
+uv1_scale = Vector3(1, 1, 1)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beam"]
+albedo_texture = ExtResource("2_orange_tex")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_shelf"]
+size = Vector3(3.2, 0.1, 1.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_backstop"]
+size = Vector3(3.2, 0.8, 0.1)
+
+[node name="PalletRack" type="Node3D"]
+
+[node name="ShelfBody" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ShelfBody"]
+shape = SubResource("BoxShape3D_shelf")
+
+[node name="ShelfPlatformMesh" type="CSGBox3D" parent="ShelfBody"]
+size = Vector3(3.2, 0.1, 1.6)
+material = SubResource("StandardMaterial3D_shelf")
+
+[node name="BackstopCollision" type="CollisionShape3D" parent="ShelfBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.75)
+shape = SubResource("BoxShape3D_backstop")
+
+[node name="BackstopMesh" type="CSGBox3D" parent="ShelfBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.75)
+size = Vector3(3.2, 0.8, 0.1)
+material = SubResource("StandardMaterial3D_beam")
+
+[node name="FrontBeam" type="CSGBox3D" parent="ShelfBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0.75)
+size = Vector3(3.2, 0.15, 0.1)
+material = SubResource("StandardMaterial3D_beam")
+
+[node name="RearBeam" type="CSGBox3D" parent="ShelfBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.75)
+size = Vector3(3.2, 0.15, 0.1)
+material = SubResource("StandardMaterial3D_beam")
+
+[node name="Posts" type="Node3D" parent="."]
+
+[node name="Post_FL" type="CSGBox3D" parent="Posts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.25, 0.75)
+use_collision = true
+size = Vector3(0.12, 2.5, 0.12)
+material = SubResource("StandardMaterial3D_post")
+
+[node name="Post_FR" type="CSGBox3D" parent="Posts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.25, 0.75)
+use_collision = true
+size = Vector3(0.12, 2.5, 0.12)
+material = SubResource("StandardMaterial3D_post")
+
+[node name="Post_RL" type="CSGBox3D" parent="Posts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.25, -0.75)
+use_collision = true
+size = Vector3(0.12, 2.5, 0.12)
+material = SubResource("StandardMaterial3D_post")
+
+[node name="Post_RR" type="CSGBox3D" parent="Posts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.25, -0.75)
+use_collision = true
+size = Vector3(0.12, 2.5, 0.12)
+material = SubResource("StandardMaterial3D_post")
+
+[node name="RackLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.8)
+text = "RAISED PALLET DROP SHELF (HEIGHT: 1.2M)
+ELEVATE FORKS BEFORE PLACING"
+font_size = 24
+outline_size = 6
+modulate = Color(0.2, 1, 0.3, 1)

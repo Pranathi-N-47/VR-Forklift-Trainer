@@ -1,0 +1,101 @@
+[gd_scene load_steps=12 format=3 uid="uid://c7k8m3n8p0w1q"]
+
+[ext_resource type="Texture2D" uid="uid://bk8s0364iuhtw" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_0cxlj"]
+[ext_resource type="Script" path="res://Scripts/Test/TestScene.gd" id="1_ejd73"]
+[ext_resource type="PackedScene" uid="uid://b3p8qm6jkv801" path="res://Scenes/Player/xr_player.tscn" id="2_xrplayer"]
+[ext_resource type="PackedScene" uid="uid://c1qpymnrp5vh8" path="res://Scenes/Templates/forklift.tscn" id="3_forklift"]
+[ext_resource type="PackedScene" uid="uid://beo7xhnaxqpis" path="res://Scenes/Props/pallet_base.tscn" id="4_pallet_base"]
+[ext_resource type="PackedScene" uid="uid://ujy77teadgii" path="res://Scenes/Props/pallet_drum_type0.tscn" id="5_pallet_drum0"]
+[ext_resource type="PackedScene" uid="uid://d04wpnnoomikg" path="res://Scenes/Props/pallet_drum_type1.tscn" id="6_pallet_drum1"]
+[ext_resource type="PackedScene" uid="uid://c6vx12543qmba" path="res://Scenes/Props/traffic_cone.tscn" id="7_traffic_cone"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_texture = ExtResource("1_0cxlj")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = SubResource("StandardMaterial3D_floor")
+size = Vector3(500, 1, 500)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(500, 1, 500)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+
+[sub_resource type="Sky" id="Sky_sky"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_env"]
+background_mode = 2
+sky = SubResource("Sky_sky")
+
+[node name="DevA_TestBed" type="Node3D"]
+script = ExtResource("1_ejd73")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("BoxMesh_floor")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_env")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(-0.629324, -0.545148, 0.553864, 0, 0.712692, 0.701477, -0.777143, 0.441456, -0.448514, 5.54126, 8.76734, -4.74031)
+shadow_enabled = true
+
+[node name="Forklift" parent="." groups=["forklift"] instance=ExtResource("3_forklift")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="XRPlayer" parent="." instance=ExtResource("2_xrplayer")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4, 0.05, -0.25)
+
+[node name="Pallet_Base" parent="." instance=ExtResource("4_pallet_base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -6)
+
+[node name="Pallet_Base2" parent="." instance=ExtResource("4_pallet_base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.1, -6)
+
+[node name="Pallet_Drum_Type0" parent="." instance=ExtResource("5_pallet_drum0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.1, -6)
+
+[node name="Pallet_Drum_Type1" parent="." instance=ExtResource("6_pallet_drum1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -9)
+
+[node name="TrafficCone1" parent="." instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.05, 3.0)
+
+[node name="TrafficCone2" parent="." instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.05, 3.0)
+
+[node name="TrafficCone3" parent="." instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.05, 6.0)
+
+[node name="TrafficCone4" parent="." instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.05, 6.0)
+
+[node name="TrafficCone5" parent="." instance=ExtResource("7_traffic_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.05, 9.0)
+
+[node name="StageMarkers" type="Node3D" parent="."]
+
+[node name="Stage1_PreOpInspection" type="Marker3D" parent="StageMarkers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4, 0.05, -0.25)
+
+[node name="Stage2_CabEntry" type="Marker3D" parent="StageMarkers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.2, 0.05, -0.25)
+
+[node name="Stage3_DrivingCourse" type="Marker3D" parent="StageMarkers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.05, 1.0)
+
+[node name="Stage4_PalletPickup" type="Marker3D" parent="StageMarkers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.05, -4.0)
+
+[node name="Stage5_ParkingBay" type="Marker3D" parent="StageMarkers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.05, 12.0)
+
+

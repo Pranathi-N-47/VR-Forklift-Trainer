@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=3 uid="uid://b3p8qm6jkv801"]
+
+[ext_resource type="Script" path="res://Scripts/Player/xr_player.gd" id="1_xrplayer"]
+[ext_resource type="Script" path="res://Scripts/Player/viewpoint_controller.gd" id="2_viewpoint"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.35
+height = 1.75
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+bg_color = Color(0.08, 0.08, 0.1, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 16.0
+expand_margin_top = 8.0
+expand_margin_right = 16.0
+expand_margin_bottom = 8.0
+
+[node name="XRPlayer" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_xrplayer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="FootstepAudio" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+max_distance = 15.0
+bus = &"Footstep"
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
+current = true
+near = 0.05
+far = 150.0
+
+[node name="PromptLabel3D" type="Label3D" parent="XROrigin3D/XRCamera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, -0.85)
+visible = false
+no_depth_test = true
+billboard = 1
+pixel_size = 0.0012
+modulate = Color(1, 0.9, 0.2, 1)
+outline_modulate = Color(0, 0, 0, 1)
+text = "[E] Enter Forklift"
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 1.2, -0.3)
+tracker = &"left_hand"
+pose = &"aim"
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 1.2, -0.3)
+tracker = &"right_hand"
+pose = &"aim"
+
+[node name="ViewpointController" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("2_viewpoint")
+player = NodePath("..")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="CenterContainer" type="CenterContainer" parent="HUD"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PromptLabel2D" type="Label" parent="HUD/CenterContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_prompt")
+text = "[E] or VR Trigger: Enter Forklift"
+horizontal_alignment = 1
