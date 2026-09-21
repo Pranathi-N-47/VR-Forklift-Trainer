@@ -24,7 +24,7 @@ func _ready() -> void:
 	_initial_transform = global_transform
 	mass = cargo_weight
 
-	call_deferred("_ignore_forklift_collision")
+
 
 	if pickup_area:
 		pickup_area.area_entered.connect(_on_pickup_area_entered)
@@ -32,11 +32,6 @@ func _ready() -> void:
 		pickup_area.body_entered.connect(_on_pickup_body_entered)
 		pickup_area.body_exited.connect(_on_pickup_body_exited)
 
-
-func _ignore_forklift_collision() -> void:
-	var fl = get_tree().get_first_node_in_group("forklift")
-	if fl and fl is CollisionObject3D:
-		add_collision_exception_with(fl)
 
 
 ## Returns total cargo mass in kg

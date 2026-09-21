@@ -92,8 +92,9 @@ func _on_cab_proximity_changed(can_enter: bool, _vehicle: Node3D) -> void:
 
 func _on_seated_state_changed(is_seated: bool) -> void:
 	if is_seated:
-		_update_prompt("[E]: Exit Forklift  |  [W/S]: Drive  [A/D]: Steer  [R/F]: Lift Forks  [H]: Horn", true)
+		_update_prompt("[E]: Exit  |  [W/S]: Drive  [A/D]: Steer  |  [R/F]: Lift  [T/G]: Tilt  [H]: Horn", true)
 	else:
+		_release_all_vehicle_actions()
 		if viewpoint_controller and viewpoint_controller.nearby_vehicle:
 			_update_prompt("[E] or VR Trigger: Enter Forklift", true)
 		else:
@@ -161,9 +162,11 @@ func _handle_mouse_look(relative: Vector2) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	# When seated in the cab, physics and gravity must be completely disabled
+	# When seated in the cab, physics and gravity are disabled; route VR controllers to vehicle
 	if not is_locomotion_enabled:
 		velocity = Vector3.ZERO
+		if is_xr_active:
+			_process_vr_vehicle_inputs()
 		return
 
 	if _snap_turn_timer > 0.0:
@@ -187,6 +190,59 @@ func _physics_process(delta: float) -> void:
 		if _distance_traveled_since_step >= step_distance:
 			_play_footstep()
 			_distance_traveled_since_step = 0.0
+
+
+func _process_vr_vehicle_inputs() -> void:
+	# Left controller: Drive (Throttle/Brake) & Steer
+	if left_hand:
+		var left_stick: Vector2 = left_hand.get_vector2("primary")
+		if left_stick.y > 0.15:
+			Input.action_press("Throttle", left_stick.y)
+		else:
+			Input.action_release("Throttle")
+		if left_stick.y < -0.15:
+			Input.action_press("Brake", -left_stick.y)
+		else:
+			Input.action_release("Brake")
+		if left_stick.x < -0.15:
+			Input.action_press("Steer Left", -left_stick.x)
+		else:
+			Input.action_release("Steer Left")
+		if left_stick.x > 0.15:
+			Input.action_press("Steer Right", left_stick.x)
+		else:
+			Input.action_release("Steer Right")
+
+	# Right controller: Lift (Y) & Mast Tilt (X)
+	if right_hand:
+		var right_stick: Vector2 = right_hand.get_vector2("primary")
+		if right_stick.y > 0.2:
+			Input.action_press("Lift Up", right_stick.y)
+		else:
+			Input.action_release("Lift Up")
+		if right_stick.y < -0.2:
+			Input.action_press("Lift Down", -right_stick.y)
+		else:
+			Input.action_release("Lift Down")
+		if right_stick.x > 0.2:
+			Input.action_press("Lift Tilt Front", right_stick.x)
+		else:
+			Input.action_release("Lift Tilt Front")
+		if right_stick.x < -0.2:
+			Input.action_press("Lift Tilt Back", -right_stick.x)
+		else:
+			Input.action_release("Lift Tilt Back")
+
+
+func _release_all_vehicle_actions() -> void:
+	Input.action_release("Throttle")
+	Input.action_release("Brake")
+	Input.action_release("Steer Left")
+	Input.action_release("Steer Right")
+	Input.action_release("Lift Up")
+	Input.action_release("Lift Down")
+	Input.action_release("Lift Tilt Front")
+	Input.action_release("Lift Tilt Back")
 
 
 func _process_turning(_delta: float) -> void:
@@ -301,5 +357,3 @@ func teleport_to_position(pos: Vector3, yaw_rad: float = 0.0) -> void:
 	_cam_pitch = 0.0
 	if xr_camera:
 		xr_camera.rotation.x = 0.0
-
-

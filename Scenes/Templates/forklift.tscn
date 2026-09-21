@@ -268,7 +268,7 @@ points = PackedVector3Array(-0.369786, -0.22223, -0.0550315, 0.369785, -0.22223,
 size = Vector3(6.5, 7, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c4p46"]
-size = Vector3(0.75, 0.177869, 7.72084)
+size = Vector3(0.75, 0.138, 7.72084)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ymwp7"]
 resource_name = "Tire"
@@ -531,12 +531,12 @@ mesh = SubResource("ArrayMesh_d318h")
 skeleton = NodePath("")
 
 [node name="Mast" type="MeshInstance3D" parent="Body" unique_id=1193957117]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000586714, 0.33212, 0.859192)
+transform = Transform3D(1, 0, 0, 0, 0.999507, -0.031411, 0, 0.031411, 0.999507, -0.000586714, 0.33212, 0.859192)
 mesh = SubResource("ArrayMesh_55occ")
 skeleton = NodePath("")
 
 [node name="Fork" type="MeshInstance3D" parent="Body/Mast" unique_id=1050226956]
-transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 0.000586767, -0.203438, 0.13615)
+transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 0.000586767, -0.23, 0.13615)
 mesh = SubResource("ArrayMesh_6pkli")
 skeleton = NodePath("")
 
@@ -577,15 +577,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000586714, 0.33212, 0.8591
 shape = SubResource("ConvexPolygonShape3D_eju8u")
 
 [node name="Fork_Plate_Collision" type="CollisionShape3D" parent="." unique_id=853988395]
-transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 5.296897e-08, 0.652128, 0.995342)
+transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 5.296897e-08, 0.625566, 0.995342)
 shape = SubResource("BoxShape3D_014of")
 
 [node name="Fork_Right_Collision" type="CollisionShape3D" parent="." unique_id=2119854772]
-transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, -0.20977104, 0.040973, 1.6461964)
+transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, -0.20977104, 0.014411, 1.6461964)
 shape = SubResource("BoxShape3D_c4p46")
 
 [node name="Fork_Left_Collision" type="CollisionShape3D" parent="." unique_id=567721708]
-transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 0.20975202, 0.040986873, 1.6462744)
+transform = Transform3D(0.159386, 0, 0, 0, 0.159386, 0, 0, 0, 0.159386, 0.20975202, 0.014425, 1.6462744)
 shape = SubResource("BoxShape3D_c4p46")
 
 [node name="Wheel_FL" type="VehicleWheel3D" parent="." unique_id=1083397159]

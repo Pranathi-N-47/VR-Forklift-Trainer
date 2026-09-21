@@ -56,14 +56,9 @@ func _ready() -> void:
 		carry_point.area_entered.connect(_on_carry_point_area_entered)
 		carry_point.area_exited.connect(_on_carry_point_area_exited)
 
-	# Disable rigid body collisions between forklift and pallets so tines enter pockets smoothly
-	call_deferred("_ignore_pallet_collisions")
+	fork.position.y = -0.230
+	mast.rotation.x = deg_to_rad(1.8)
 
-
-func _ignore_pallet_collisions() -> void:
-	for p in get_tree().get_nodes_in_group("pallets"):
-		if p is CollisionObject3D:
-			add_collision_exception_with(p)
 
 
 func _physics_process(delta: float) -> void:
@@ -105,7 +100,7 @@ func _physics_process(delta: float) -> void:
 	_handle_steering_and_lever_animation(delta)
 
 
-## Lift and Tilt hydraulics control
+
 func _handle_lift_control(delta: float) -> void:
 	var lift_action: bool = false
 
@@ -126,8 +121,8 @@ func _handle_lift_control(delta: float) -> void:
 			mast.rotation.x -= 0.25 * delta
 			lift_action = true
 
-	fork.position.y = clampf(fork.position.y, -0.203, 1.878)
-	mast.rotation.x = clampf(mast.rotation.x, deg_to_rad(-8.0), 0.0)
+	fork.position.y = clampf(fork.position.y, -0.230, 1.878)
+	mast.rotation.x = clampf(mast.rotation.x, deg_to_rad(-8.0), deg_to_rad(5.0))
 
 	fork_height_changed.emit(fork.position.y)
 
@@ -143,14 +138,19 @@ func _handle_lift_control(delta: float) -> void:
 
 ## Manages real-life weight transfer, center-of-mass shift, and pallet pickup locking
 func _handle_cargo_weight_dynamics() -> void:
-	# 1. Attachment: Pick up pallet when forks lift off ground with pallet aligned and fully penetrated
-	if carried_pallet == null and fork.position.y > -0.14:
+	# 1. Attachment: Pick up pallet when forks lift off ground with pallet aligned and penetrated.
+	#    Scan ALL pallets in the group – nearby_pallets can be stale after a drop because the
+	#    pallet falls away from CarryPoint causing area_exited to clear the array.
+	if carried_pallet == null and fork.position.y > -0.16:
 		var tine_center: Vector3 = fork.to_global(Vector3(0.0, -0.16, 4.08))
-		for p in nearby_pallets:
-			if is_instance_valid(p) and not p.is_carried:
+		for p in get_tree().get_nodes_in_group("pallets"):
+			if p is PalletCargo and is_instance_valid(p) and not p.is_carried:
 				if p.is_aligned_with_forks(fork.global_transform):
-					var horiz_dist: float = Vector2(p.global_position.x - tine_center.x, p.global_position.z - tine_center.z).length()
-					# Pallet must be deeply penetrated on tines (within 0.65m of tine center)
+					var horiz_dist: float = Vector2(
+						p.global_position.x - tine_center.x,
+						p.global_position.z - tine_center.z
+					).length()
+					# Pallet must be under the tine center (within 0.65 m horizontally)
 					if horiz_dist <= 0.65:
 						_attach_pallet(p)
 						break
@@ -158,7 +158,7 @@ func _handle_cargo_weight_dynamics() -> void:
 	# 2. Detachment: Release pallet when lowered flat to ground or placed on rack shelf
 	elif carried_pallet != null and is_instance_valid(carried_pallet):
 		var should_detach: bool = false
-		if fork.position.y <= -0.19:
+		if fork.position.y <= -0.21:
 			# Fully lowered to ground level
 			should_detach = true
 		elif Input.is_action_pressed("Lift Down"):
@@ -215,7 +215,6 @@ func _detach_pallet() -> void:
 func _on_carry_point_area_entered(area: Area3D) -> void:
 	var parent_body = area.get_parent()
 	if parent_body is PalletCargo:
-		add_collision_exception_with(parent_body)
 		if not nearby_pallets.has(parent_body):
 			nearby_pallets.append(parent_body)
 
