@@ -1,101 +1,297 @@
 extends VehicleBody3D
+class_name ForkliftVehicle
 
-@onready var wheel_fl = $Wheel_FL
-@onready var wheel_fr = $Wheel_FR
-@onready var drive_location = $DriveLocation
-@onready var exit_location = $ExitLocation
-@onready var fork = $Body/Mast/Fork
-@onready var mast = $Body/Mast
-@onready var steer_mesh = $Body/Steer
-@onready var lever_height = $"Body/Lever-Height"
-@onready var lever_tilt = $"Body/Lever-Tilt"
-@onready var fps_camera = $FPSCamera
-@onready var engine_sfx = $EngineSFX
-@onready var lift_sfx = $LiftSFX
+signal pallet_picked_up(pallet: Node3D)
+signal pallet_released(pallet: Node3D)
+signal fork_height_changed(height: float)
 
-var max_rpm = 300
-var max_torque = 100
+@onready var wheel_fl: VehicleWheel3D = $Wheel_FL
+@onready var wheel_fr: VehicleWheel3D = $Wheel_FR
+@onready var drive_location: Node3D = $DriveLocation
+@onready var exit_location: Node3D = $ExitLocation
+@onready var fork: Node3D = $Body/Mast/Fork
+@onready var mast: Node3D = $Body/Mast
+@onready var steer_mesh: Node3D = $Body/Steer
+@onready var lever_height: Node3D = $"Body/Lever-Height"
+@onready var lever_tilt: Node3D = $"Body/Lever-Tilt"
+@onready var fps_camera: Camera3D = $FPSCamera
+@onready var engine_sfx: AudioStreamPlayer3D = $EngineSFX
+@onready var lift_sfx: AudioStreamPlayer3D = $LiftSFX
+@onready var reverse_beeper_sfx: AudioStreamPlayer3D = get_node_or_null("ReverseBeeperSFX")
+@onready var horn_sfx: AudioStreamPlayer3D = get_node_or_null("HornSFX")
+@onready var carry_point: Area3D = get_node_or_null("Body/Mast/Fork/CarryPoint")
 
-var is_controllable = false
+# Realistic Industrial Forklift Physics Specs (2.5-ton warehouse truck)
+var base_mass: float = 1600.0
+var base_center_of_mass: Vector3 = Vector3(0.0, 0.15, 0.05) # Centered stably between front and rear axles
+
+var max_rpm: float = 280.0
+var max_torque: float = 900.0 ## Balanced torque for 1.6-ton machine to reach warehouse safe speeds (~10-12 km/h)
+var engine_brake_strength: float = 30.0 ## Hydrostatic engine braking when throttle released
+
+var is_controllable: bool = false
 var lever_height_input: float = 0.0
 var lever_tilt_input: float = 0.0
 
 var min_velocity_length: float = 0.0
 var max_velocity_length: float = 5.0
 
-# 스크립트 시작
-func _ready():
-	# 리프트 조작 sfx를 멈춤 상태로 
-	lift_sfx.stream_paused = true
+# Pallet Attachment & Cargo Weight Tracking
+var nearby_pallets: Array[PalletCargo] = []
+var carried_pallet: PalletCargo = null
 
-func _physics_process(delta):
+
+func _ready() -> void:
+	add_to_group("forklift")
+	# Configure base physics parameters
+	mass = base_mass
+	center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
+	center_of_mass = base_center_of_mass
+
+	if lift_sfx:
+		lift_sfx.stream_paused = true
+
+	# Connect CarryPoint triggers if present
+	if carry_point:
+		carry_point.area_entered.connect(_on_carry_point_area_entered)
+		carry_point.area_exited.connect(_on_carry_point_area_exited)
+
+	# Disable rigid body collisions between forklift and pallets so tines enter pockets smoothly
+	call_deferred("_ignore_pallet_collisions")
+
+
+func _ignore_pallet_collisions() -> void:
+	for p in get_tree().get_nodes_in_group("pallets"):
+		if p is CollisionObject3D:
+			add_collision_exception_with(p)
+
+
+func _physics_process(delta: float) -> void:
 	_handle_engine_sfx()
-	
-	# 조작가능한 상태(플레이어 탑승상태)일경우만 입력 처리
+
+	# Process lift and dynamic cargo lock regardless of driving state
+	_handle_lift_control(delta)
+	_handle_cargo_weight_dynamics()
+
 	if not is_controllable:
+		# Engage parking brake when driver is not in the cab
+		brake = 60.0
+		wheel_fl.engine_force = 0.0
+		wheel_fr.engine_force = 0.0
+		if reverse_beeper_sfx and reverse_beeper_sfx.playing:
+			reverse_beeper_sfx.stop()
 		return
 
-	steering = lerp(steering, Input.get_axis("Steer Left", "Steer Right") * 0.5, 5 * delta)
+	# Rear-wheel steering simulation
+	var steer_target: float = Input.get_axis("Steer Left", "Steer Right") * 0.55
+	steering = lerp(steering, steer_target, 5.0 * delta)
 
-	var acceleration = Input.get_axis("Brake", "Throttle")
-	var rpm = wheel_fl.get_rpm()
-	wheel_fl.engine_force = acceleration * max_torque * (1 - rpm / max_rpm)
-	rpm = wheel_fr.get_rpm()
-	wheel_fr.engine_force = acceleration * max_torque * (1 - rpm / max_rpm)
+	# Acceleration, Torque, and Hydrostatic Engine Braking
+	var acceleration: float = Input.get_axis("Brake", "Throttle")
+	if absf(acceleration) > 0.05:
+		brake = 0.0
+		var rpm: float = wheel_fl.get_rpm()
+		wheel_fl.engine_force = acceleration * max_torque * (1.0 - rpm / max_rpm)
+		rpm = wheel_fr.get_rpm()
+		wheel_fr.engine_force = acceleration * max_torque * (1.0 - rpm / max_rpm)
+	else:
+		# Automatic hydrostatic engine brake when releasing pedal (prevents runaway roll)
+		wheel_fl.engine_force = 0.0
+		wheel_fr.engine_force = 0.0
+		brake = engine_brake_strength
 
-	_handle_lift_control(delta)
+	_handle_reverse_beeper(acceleration)
+	_handle_horn()
 	_handle_steering_and_lever_animation(delta)
 
-# 리프트 조작 처리
-func _handle_lift_control(delta: float):
-	# 상하 이동
-	if Input.is_action_pressed("Lift Up"):
-		fork.position.y += 1.0 * delta
-	if Input.is_action_pressed("Lift Down"):
-		fork.position.y -= 1.0 * delta
 
-	# 앞뒤 틸트
-	if Input.is_action_pressed("Lift Tilt Front"):
-		mast.rotation.x += 0.25 * delta
-	if Input.is_action_pressed("Lift Tilt Back"):
-		mast.rotation.x -= 0.25 * delta
+## Lift and Tilt hydraulics control
+func _handle_lift_control(delta: float) -> void:
+	var lift_action: bool = false
+
+	if is_controllable:
+		# Vertical Fork Translation
+		if Input.is_action_pressed("Lift Up"):
+			fork.position.y += 0.8 * delta
+			lift_action = true
+		if Input.is_action_pressed("Lift Down"):
+			fork.position.y -= 0.8 * delta
+			lift_action = true
+
+		# Mast Forward/Back Tilt
+		if Input.is_action_pressed("Lift Tilt Front"):
+			mast.rotation.x += 0.25 * delta
+			lift_action = true
+		if Input.is_action_pressed("Lift Tilt Back"):
+			mast.rotation.x -= 0.25 * delta
+			lift_action = true
 
 	fork.position.y = clampf(fork.position.y, -0.203, 1.878)
 	mast.rotation.x = clampf(mast.rotation.x, deg_to_rad(-8.0), 0.0)
-	
-	# 리프트 조작시 조작효과음 재생
-	if Input.is_action_pressed("Lift Up") or Input.is_action_pressed("Lift Down") or Input.is_action_pressed("Lift Tilt Front") or Input.is_action_pressed("Lift Tilt Back"):
-		lift_sfx.stream_paused = false
-		if lift_sfx.playing == false:
-			lift_sfx.play()
-	else:
-		lift_sfx.stream_paused = true
 
-# 스티어링/레버 조작 애니메이션 처리
+	fork_height_changed.emit(fork.position.y)
+
+	# Audio feedback for hydraulics
+	if lift_sfx:
+		if lift_action:
+			lift_sfx.stream_paused = false
+			if not lift_sfx.playing:
+				lift_sfx.play()
+		else:
+			lift_sfx.stream_paused = true
+
+
+## Manages real-life weight transfer, center-of-mass shift, and pallet pickup locking
+func _handle_cargo_weight_dynamics() -> void:
+	# 1. Attachment: Pick up pallet when forks lift off ground with pallet aligned and fully penetrated
+	if carried_pallet == null and fork.position.y > -0.14:
+		var tine_center: Vector3 = fork.to_global(Vector3(0.0, -0.16, 4.08))
+		for p in nearby_pallets:
+			if is_instance_valid(p) and not p.is_carried:
+				if p.is_aligned_with_forks(fork.global_transform):
+					var horiz_dist: float = Vector2(p.global_position.x - tine_center.x, p.global_position.z - tine_center.z).length()
+					# Pallet must be deeply penetrated on tines (within 0.65m of tine center)
+					if horiz_dist <= 0.65:
+						_attach_pallet(p)
+						break
+
+	# 2. Detachment: Release pallet when lowered flat to ground or placed on rack shelf
+	elif carried_pallet != null and is_instance_valid(carried_pallet):
+		var should_detach: bool = false
+		if fork.position.y <= -0.19:
+			# Fully lowered to ground level
+			should_detach = true
+		elif Input.is_action_pressed("Lift Down"):
+			# Detect if pallet bottom has contacted an elevated shelf or floor while lowering
+			var space_state = get_world_3d().direct_space_state
+			var ray_from: Vector3 = carried_pallet.global_position + Vector3(0.0, 0.1, 0.0)
+			var ray_to: Vector3 = carried_pallet.global_position + Vector3(0.0, -0.22, 0.0)
+			var query = PhysicsRayQueryParameters3D.create(ray_from, ray_to)
+			query.exclude = [get_rid(), carried_pallet.get_rid()]
+			var result = space_state.intersect_ray(query)
+			if result:
+				should_detach = true
+
+		if should_detach:
+			_detach_pallet()
+
+	# 3. Dynamic Center of Mass Adjustment while carrying load
+	if carried_pallet != null and is_instance_valid(carried_pallet):
+		var cargo_mass: float = carried_pallet.get_cargo_weight()
+		var weight_ratio: float = cargo_mass / base_mass
+		# Shift center of mass forward proportionally to load
+		center_of_mass.z = base_center_of_mass.z + (weight_ratio * 0.35)
+		# Raise center of mass higher as the mast elevates (creates realistic rollover risk in VR!)
+		center_of_mass.y = base_center_of_mass.y + (fork.position.y + 0.2) * (weight_ratio * 0.4)
+
+
+func _attach_pallet(pallet: PalletCargo) -> void:
+	carried_pallet = pallet
+	carried_pallet.set_carried(true)
+	# Reparent to fork and seat flush on tines with zero gap
+	carried_pallet.reparent(fork, false)
+	carried_pallet.transform = Transform3D(Basis.IDENTITY, Vector3(0.0, -0.16, 4.08))
+
+	# Transfer cargo mass to vehicle
+	mass = base_mass + carried_pallet.get_cargo_weight()
+	pallet_picked_up.emit(carried_pallet)
+
+
+func _detach_pallet() -> void:
+	if carried_pallet and is_instance_valid(carried_pallet):
+		var p = carried_pallet
+		carried_pallet = null
+		var current_global: Transform3D = p.global_transform
+		p.reparent(get_tree().current_scene, false)
+		p.global_transform = current_global
+		p.set_carried(false)
+		pallet_released.emit(p)
+
+	# Restore unloaded forklift mass & center of mass
+	mass = base_mass
+	center_of_mass = base_center_of_mass
+
+
+func _on_carry_point_area_entered(area: Area3D) -> void:
+	var parent_body = area.get_parent()
+	if parent_body is PalletCargo:
+		add_collision_exception_with(parent_body)
+		if not nearby_pallets.has(parent_body):
+			nearby_pallets.append(parent_body)
+
+
+func _on_carry_point_area_exited(area: Area3D) -> void:
+	var parent_body = area.get_parent()
+	if parent_body is PalletCargo:
+		nearby_pallets.erase(parent_body)
+
+
+# Steering wheel and hydraulic lever visual animations
 func _handle_steering_and_lever_animation(delta: float) -> void:
-	steer_mesh.rotation.y = -steering * 2.5
-	
-	lever_height_input = lerp(lever_height_input, Input.get_axis("Lift Down", "Lift Up") * deg_to_rad(7.0), 5 * delta)
-	lever_height.rotation.x = deg_to_rad(-14.8) + lever_height_input
-	
-	lever_tilt_input = lerp(lever_tilt_input, Input.get_axis("Lift Tilt Back", "Lift Tilt Front") * deg_to_rad(7.0), 5 * delta)
-	lever_tilt.rotation.x = deg_to_rad(-14.8) + lever_tilt_input
+	if steer_mesh:
+		steer_mesh.rotation.y = -steering * 2.5
 
-# 차량 엔진 사운드 효과 처리
-func _handle_engine_sfx():	
-	var velocity_length = clamp(linear_velocity.length(), 0.0, 5.0)
-	var velocity_ratio = inverse_lerp(0.0, 5.0, velocity_length)
-	var pitch_result = 1.0 + velocity_ratio
-	engine_sfx.pitch_scale = pitch_result
+	if lever_height:
+		lever_height_input = lerp(lever_height_input, Input.get_axis("Lift Down", "Lift Up") * deg_to_rad(7.0), 5.0 * delta)
+		lever_height.rotation.x = deg_to_rad(-14.8) + lever_height_input
 
-# 탑승구역(BoardingArea)에 뭔가 탐지되었을 경우 처리
-func _on_boarding_area_body_entered(body):
+	if lever_tilt:
+		lever_tilt_input = lerp(lever_tilt_input, Input.get_axis("Lift Tilt Back", "Lift Tilt Front") * deg_to_rad(7.0), 5.0 * delta)
+		lever_tilt.rotation.x = deg_to_rad(-14.8) + lever_tilt_input
+
+
+# Dynamic engine audio pitch scaling
+func _handle_engine_sfx() -> void:
+	if not engine_sfx:
+		return
+	var velocity_length: float = clampf(linear_velocity.length(), 0.0, 5.0)
+	var velocity_ratio: float = inverse_lerp(0.0, 5.0, velocity_length)
+	engine_sfx.pitch_scale = 1.0 + (velocity_ratio * 0.4)
+
+
+# Boarding trigger callbacks
+func _on_boarding_area_body_entered(body: Node) -> void:
 	if body.get_meta("is_player", false):
-		var player = body
-		player.add_available_vehicle(self)
+		body.add_available_vehicle(self)
 
-# 탑승구역(BoardingArea)에서 탐지된 객체가 빠져나갈 경우 처리
-func _on_boarding_area_body_exited(body):
+
+func _on_boarding_area_body_exited(body: Node) -> void:
 	if body.get_meta("is_player", false):
-		var player = body
-		player.remove_available_vehicle(self)
+		body.remove_available_vehicle(self)
+
+
+## Returns current fork elevation position (m)
+func get_fork_height() -> float:
+	return fork.position.y if fork else 0.0
+
+
+## Returns live vehicle speed in km/h
+func get_speed_kmh() -> float:
+	return linear_velocity.length() * 3.6
+
+
+## Returns whether forks are at or below OSHA safe transport height (<= 0.3m above ground)
+func is_fork_at_travel_height() -> bool:
+	return (fork.position.y if fork else 0.0) <= -0.05
+
+
+## Reverse safety beeper logic
+func _handle_reverse_beeper(acceleration: float) -> void:
+	if not reverse_beeper_sfx:
+		return
+	var is_reversing: bool = acceleration < -0.05 or linear_velocity.dot(global_transform.basis.z) < -0.2
+	if is_reversing:
+		if not reverse_beeper_sfx.playing:
+			reverse_beeper_sfx.play()
+	else:
+		if reverse_beeper_sfx.playing:
+			reverse_beeper_sfx.stop()
+
+
+## Horn trigger logic
+func _handle_horn() -> void:
+	if not horn_sfx:
+		return
+	if Input.is_action_just_pressed("Horn"):
+		horn_sfx.play()
+

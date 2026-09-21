@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://b0c1sv24h81pq" path="res://Scripts/Forklift.gd" id="1_e347w"]
 [ext_resource type="AudioStream" uid="uid://bwie2mbnnxx2t" path="res://Sounds/Engine/engine_heavy_loop.mp3" id="2_myl7v"]
 [ext_resource type="AudioStream" uid="uid://bsrj2ylh11ojl" path="res://Sounds/Lift/qubodup-edev.mp3" id="3_cfnbq"]
+[ext_resource type="AudioStream" path="res://Sounds/Forklift/reverse_beeper.wav" id="4_beeper"]
+[ext_resource type="AudioStream" path="res://Sounds/Forklift/horn.wav" id="5_horn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yow1m"]
 resource_name = "Body-Lower"
@@ -505,8 +507,13 @@ shadow_mesh = SubResource("ArrayMesh_pw2ej")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_k1alr"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_carry"]
+size = Vector3(1, 0.35, 1)
+
 [node name="Forklift" type="VehicleBody3D" unique_id=1500457038]
-mass = 100.0
+mass = 1600.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 0.15, 0.05)
 script = ExtResource("1_e347w")
 
 [node name="Body" type="MeshInstance3D" parent="." unique_id=374243633]
@@ -545,6 +552,14 @@ remote_path = NodePath("../../../../Fork_Right_Collision")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.316, -0.550206, 4.084)
 remote_path = NodePath("../../../../Fork_Left_Collision")
 
+[node name="CarryPoint" type="Area3D" parent="Body/Mast/Fork" unique_id=987654321 groups=["forks"]]
+transform = Transform3D(6.27408, 0, 0, 0, 6.27408, 0, 0, 0, 6.27408, 0, -0.15, 4.08)
+collision_layer = 4
+collision_mask = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/Mast/Fork/CarryPoint"]
+shape = SubResource("BoxShape3D_carry")
+
 [node name="Remote_Mast" type="RemoteTransform3D" parent="Body/Mast" unique_id=663958066]
 remote_path = NodePath("../../../Mast_Collision")
 
@@ -577,8 +592,12 @@ shape = SubResource("BoxShape3D_c4p46")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.462497, 0.186774, 0.589793)
 use_as_traction = true
 wheel_radius = 0.25
-suspension_travel = 0.5
-suspension_stiffness = 20.0
+wheel_friction_slip = 2.0
+suspension_travel = 0.3
+suspension_stiffness = 45.0
+suspension_max_force = 12000.0
+damping_compression = 1.8
+damping_relaxation = 2.5
 
 [node name="WheelFL_Mesh" type="MeshInstance3D" parent="Wheel_FL" unique_id=146539000]
 mesh = SubResource("ArrayMesh_0grkx")
@@ -588,8 +607,12 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.462, 0.187, 0.59)
 use_as_traction = true
 wheel_radius = 0.25
-suspension_travel = 0.5
-suspension_stiffness = 20.0
+wheel_friction_slip = 2.0
+suspension_travel = 0.3
+suspension_stiffness = 45.0
+suspension_max_force = 12000.0
+damping_compression = 1.8
+damping_relaxation = 2.5
 
 [node name="WheelFR_Mesh" type="MeshInstance3D" parent="Wheel_FR" unique_id=231544371]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000496984, -0.00022614, -0.000206947)
@@ -600,8 +623,12 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.462866, 0.136887, -0.468792)
 use_as_steering = true
 wheel_radius = 0.2
-suspension_travel = 0.5
-suspension_stiffness = 20.0
+wheel_friction_slip = 2.0
+suspension_travel = 0.3
+suspension_stiffness = 45.0
+suspension_max_force = 12000.0
+damping_compression = 1.8
+damping_relaxation = 2.5
 
 [node name="WheelRL_Mesh" type="MeshInstance3D" parent="Wheel_RL" unique_id=1710073204]
 mesh = SubResource("ArrayMesh_vx2he")
@@ -611,8 +638,13 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.463, 0.137, -0.469)
 use_as_steering = true
 wheel_radius = 0.2
-suspension_travel = 0.5
-suspension_stiffness = 20.0
+wheel_friction_slip = 2.0
+suspension_travel = 0.3
+suspension_stiffness = 45.0
+suspension_max_force = 12000.0
+damping_compression = 1.8
+damping_relaxation = 2.5
+damping_relaxation = 3.0
 
 [node name="WheelRR" type="MeshInstance3D" parent="Wheel_RR" unique_id=2066375804]
 mesh = SubResource("ArrayMesh_wj2sf")
@@ -641,6 +673,19 @@ bus = &"EngineSFX"
 [node name="LiftSFX" type="AudioStreamPlayer3D" parent="." unique_id=716166678]
 stream = ExtResource("3_cfnbq")
 pitch_scale = 3.0
+
+[node name="ReverseBeeperSFX" type="AudioStreamPlayer3D" parent="." unique_id=2089207338]
+stream = ExtResource("4_beeper")
+volume_db = -4.0
+max_distance = 25.0
+
+[node name="HornSFX" type="AudioStreamPlayer3D" parent="." unique_id=2089207339]
+stream = ExtResource("5_horn")
+volume_db = 0.0
+max_distance = 35.0
+
+[node name="DashboardAnchor" type="Marker3D" parent="." unique_id=1870011155]
+transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.88, 0.42)
 
 [connection signal="body_entered" from="BoardingArea" to="." method="_on_boarding_area_body_entered"]
 [connection signal="body_exited" from="BoardingArea" to="." method="_on_boarding_area_body_exited"]

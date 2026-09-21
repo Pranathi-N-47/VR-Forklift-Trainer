@@ -70,6 +70,8 @@ points = PackedVector3Array(0.129301, 0.0587061, 0.011866, 0.011889, 0.0587061, 
 size = Vector3(0.85, 0.12, 0.95)
 
 [node name="Pallet_Base" type="RigidBody3D" groups=["pallets"]]
+collision_layer = 16
+collision_mask = 1
 mass = 25.0
 script = ExtResource("1_cargo")
 cargo_name = "Standard Wooden Pallet"
@@ -119,7 +121,7 @@ shape = SubResource("ConvexPolygonShape3D_3yegr")
 [node name="PickupArea" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.065, 0)
 collision_layer = 8
-collision_mask = 7
+collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea"]
 shape = SubResource("BoxShape3D_pickup")

@@ -6,9 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://b3p8qm6jkv801" path="res://Scenes/Player/xr_player.tscn" id="5_xrplayer"]
 [ext_resource type="PackedScene" uid="uid://c1qpymnrp5vh8" path="res://Scenes/Templates/forklift.tscn" id="6_forklift"]
 [ext_resource type="PackedScene" uid="uid://c6vx12543qmba" path="res://Scenes/Props/traffic_cone.tscn" id="7_traffic_cone"]
-[ext_resource type="PackedScene" uid="uid://beo7xhnaxqpis" path="res://Scenes/Templates/pallet_base.tscn" id="8_pallet_base"]
-[ext_resource type="PackedScene" uid="uid://ujy77teadgii" path="res://Scenes/Templates/pallet_drum_type0.tscn" id="9_pallet_drum0"]
-[ext_resource type="PackedScene" uid="uid://d04wpnnoomikg" path="res://Scenes/Templates/pallet_drum_type1.tscn" id="10_pallet_drum1"]
+[ext_resource type="PackedScene" uid="uid://bsnpop0ft2p3e" path="res://Scenes/Props/pallet_base.tscn" id="8_pallet_base"]
+[ext_resource type="PackedScene" uid="uid://ujowyk6hlvne" path="res://Scenes/Props/pallet_drum_type0.tscn" id="9_pallet_drum0"]
+[ext_resource type="PackedScene" uid="uid://3hy0v4g0eh0f" path="res://Scenes/Props/pallet_drum_type1.tscn" id="10_pallet_drum1"]
 [ext_resource type="PackedScene" uid="uid://c8n4y2w6j1wax" path="res://Scenes/Props/inspection_checkpoint.tscn" id="11_checkpoint"]
 [ext_resource type="PackedScene" uid="uid://b2m4k6w8p1q7v" path="res://Scenes/Props/pallet_rack.tscn" id="12_rack"]
 [ext_resource type="Script" uid="uid://khkdeoxm6a1e" path="res://Scripts/Training/training_manager.gd" id="13_mgr"]
@@ -199,7 +199,7 @@ text = "PARKING BAY RESERVED - COMPLETE CARGO MISSION FIRST"
 font_size = 22
 
 [node name="Forklift" parent="." unique_id=800243629 groups=["forklift"] instance=ExtResource("6_forklift")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 12)
 
 [node name="XRPlayer" parent="." unique_id=888941897 instance=ExtResource("5_xrplayer")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4, 0.05, 11.75)

@@ -82,6 +82,9 @@ func _ready() -> void:
 	# Connect viewpoint controller
 	_connect_viewpoint_controller()
 
+	# Connect forklift cargo events
+	_connect_forklift_events()
+
 	# Initialize at Stage 1
 	start_stage(TrainingStage.STAGE_1_INSPECTION, true)
 
@@ -259,3 +262,22 @@ func _on_seated_state_changed(is_seated: bool) -> void:
 	else:
 		if current_stage == TrainingStage.STAGE_6_PARK_FORKLIFT:
 			advance_to_next_stage()
+
+
+# Connect signals from Forklift for pallet pickup & placement
+func _connect_forklift_events() -> void:
+	if not forklift:
+		return
+	if forklift.has_signal("pallet_released"):
+		if not forklift.pallet_released.is_connected(_on_pallet_released):
+			forklift.pallet_released.connect(_on_pallet_released)
+
+
+func _on_pallet_released(pallet: Node3D) -> void:
+	if current_stage == TrainingStage.STAGE_5_CARGO_MISSION and pallet:
+		# Check if the pallet was placed near the elevated dropoff rack at (-16, 1.2, -14)
+		var drop_shelf_pos: Vector3 = Vector3(-16.0, 1.2, -14.0)
+		if pallet.global_position.distance_to(drop_shelf_pos) < 4.5:
+			# Successfully placed pallet onto the raised rack! Advance to parking bay!
+			advance_to_next_stage()
+
