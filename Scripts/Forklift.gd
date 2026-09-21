@@ -275,6 +275,21 @@ func is_fork_at_travel_height() -> bool:
 	return (fork.position.y if fork else 0.0) <= -0.05
 
 
+## Returns transmission gear state ("F", "N", "R")
+func get_gear_state() -> String:
+	var forward_speed = linear_velocity.dot(global_transform.basis.z)
+	if forward_speed < -0.15 or Input.is_action_pressed("Brake"):
+		return "R"
+	elif forward_speed > 0.15 or Input.is_action_pressed("Throttle"):
+		return "F"
+	return "N"
+
+
+## Returns current forward/backward mast tilt in degrees
+func get_mast_tilt_deg() -> float:
+	return rad_to_deg(mast.rotation.x) if mast else 0.0
+
+
 ## Reverse safety beeper logic
 func _handle_reverse_beeper(acceleration: float) -> void:
 	if not reverse_beeper_sfx:

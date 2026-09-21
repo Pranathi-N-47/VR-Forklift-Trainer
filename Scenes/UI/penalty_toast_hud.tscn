@@ -1,0 +1,200 @@
+[gd_scene load_steps=8 format=3 uid="uid://cx6q8n2w1yv7m"]
+
+[ext_resource type="Script" path="res://Scripts/UI/penalty_toast_hud.gd" id="1_toast"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/penalty_buzzer.wav" id="2_buzzer"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/stage_clear_chime.wav" id="3_chime"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/click.wav" id="4_click"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_finished"]
+bg_color = Color(0.07, 0.07, 0.07, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 30.0
+content_margin_top = 14.0
+content_margin_right = 30.0
+content_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_briefing"]
+bg_color = Color(0.07, 0.07, 0.07, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 36.0
+content_margin_top = 26.0
+content_margin_right = 36.0
+content_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_continue"]
+bg_color = Color(1, 0.85, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_penalty"]
+bg_color = Color(0.14, 0.02, 0.02, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.2, 1)
+content_margin_left = 24.0
+content_margin_top = 14.0
+content_margin_right = 24.0
+content_margin_bottom = 14.0
+
+[node name="PenaltyToastHUD" type="CanvasLayer"]
+layer = 6
+script = ExtResource("1_toast")
+
+[node name="TopContainer" type="CenterContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 28.0
+offset_right = 320.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="FinishedBox" type="PanelContainer" parent="TopContainer"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_finished")
+
+[node name="FinishedLabel" type="Label" parent="TopContainer/FinishedBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+text = "STAGE FINISHED
+STAGE 1: PRE-OPERATION INSPECTION"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BriefingContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BriefingBox" type="PanelContainer" parent="BriefingContainer"]
+visible = false
+custom_minimum_size = Vector2(860, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_briefing")
+
+[node name="VBox" type="VBoxContainer" parent="BriefingContainer/BriefingBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="BriefingContainer/BriefingBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "STAGE 1: PRE-OPERATION INSPECTION"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="BriefingContainer/BriefingBox/VBox"]
+layout_mode = 2
+
+[node name="ObjectiveLabel" type="Label" parent="BriefingContainer/BriefingBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "OBJECTIVE: Perform an OSHA-standard physical walkaround check before starting the vehicle."
+autowrap_mode = 2
+
+[node name="TasksLabel" type="Label" parent="BriefingContainer/BriefingBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "TASKS:
+Locate and inspect all 4 yellow inspection checkpoints around the forklift:
+• Front Mast & Forks
+• Tires & Lug Nuts
+• Rear Counterweight
+• Overhead Cab Guard"
+autowrap_mode = 2
+
+[node name="CriteriaLabel" type="Label" parent="BriefingContainer/BriefingBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "COMPLETION CRITERIA: All 4 checkpoints inspected and cleared."
+autowrap_mode = 2
+
+[node name="BtnContinue" type="Button" parent="BriefingContainer/BriefingBox/VBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_continue")
+text = "CONTINUE [ START STAGE ]"
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -240.0
+offset_right = 300.0
+offset_bottom = -140.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="PenaltyBox" type="PanelContainer" parent="CenterContainer"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_penalty")
+
+[node name="PenaltyLabel" type="Label" parent="CenterContainer/PenaltyBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 20
+text = "PENALTY: -5 POINTS
+REASON: TRAFFIC CONE COLLISION
+CURRENT SCORE: 95 / 100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuzzerAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_buzzer")
+volume_db = -3.0
+bus = &"UI"
+
+[node name="ChimeAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_chime")
+volume_db = -2.0
+bus = &"UI"
+
+[node name="ClickAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_click")
+volume_db = -2.0
+bus = &"UI"

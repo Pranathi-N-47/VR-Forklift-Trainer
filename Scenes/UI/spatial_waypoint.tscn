@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://b8k2v7y6q4n1p"]
+
+[ext_resource type="Script" path="res://Scripts/UI/spatial_waypoint.gd" id="1_waypoint"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pillar"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.2, 0.8, 1, 0.45)
+emission_enabled = true
+emission = Color(0.1, 0.7, 1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pillar"]
+material = SubResource("StandardMaterial3D_pillar")
+top_radius = 0.4
+bottom_radius = 0.6
+height = 2.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ring"]
+albedo_color = Color(1, 0.85, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.8, 0.1, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+material = SubResource("StandardMaterial3D_ring")
+inner_radius = 0.7
+outer_radius = 0.9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_edge"]
+bg_color = Color(0.08, 0.1, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.85, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+shadow_size = 6
+
+[node name="SpatialWaypoint" type="Node3D"]
+script = ExtResource("1_waypoint")
+
+[node name="BeaconPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+mesh = SubResource("CylinderMesh_pillar")
+
+[node name="BeaconRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("TorusMesh_ring")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+no_depth_test = true
+modulate = Color(0.2, 0.9, 1, 1)
+outline_modulate = Color(0, 0, 0, 1)
+text = "Active Objective
+[ 14.0m ]"
+font_size = 32
+outline_size = 8
+
+[node name="EdgeCanvas" type="CanvasLayer" parent="."]
+layer = 4
+
+[node name="EdgeIndicator" type="PanelContainer" parent="EdgeCanvas"]
+visible = false
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 260.0
+offset_bottom = 140.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_edge")
+
+[node name="HBox" type="HBoxContainer" parent="EdgeCanvas/EdgeIndicator"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ArrowIcon" type="Label" parent="EdgeCanvas/EdgeIndicator/HBox"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "▲"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EdgeLabel" type="Label" parent="EdgeCanvas/EdgeIndicator/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Target [ 14m ]"

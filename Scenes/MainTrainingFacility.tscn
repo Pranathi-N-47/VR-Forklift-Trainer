@@ -12,6 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://c8n4y2w6j1wax" path="res://Scenes/Props/inspection_checkpoint.tscn" id="11_checkpoint"]
 [ext_resource type="PackedScene" uid="uid://b2m4k6w8p1q7v" path="res://Scenes/Props/pallet_rack.tscn" id="12_rack"]
 [ext_resource type="Script" uid="uid://khkdeoxm6a1e" path="res://Scripts/Training/training_manager.gd" id="13_mgr"]
+[ext_resource type="PackedScene" uid="uid://dp6m3v1w8yq5r" path="res://Scenes/UI/simulator_hud_overlay.tscn" id="14_hud"]
+[ext_resource type="PackedScene" uid="uid://cx6q8n2w1yv7m" path="res://Scenes/UI/penalty_toast_hud.tscn" id="15_toast"]
+[ext_resource type="PackedScene" uid="uid://b1g4v6m2p8n3q" path="res://Scenes/UI/vr_pause_menu.tscn" id="17_pause"]
+[ext_resource type="PackedScene" uid="uid://dm8k7y2w4q1v9" path="res://Scenes/UI/results_screen.tscn" id="18_results"]
+[ext_resource type="PackedScene" uid="uid://b5k8n2w4q1v7m" path="res://Scenes/UI/main_menu.tscn" id="19_menu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_daylight"]
 sky_top_color = Color(0.35, 0.55, 0.92, 1)
@@ -327,3 +332,13 @@ stage_barriers_root = NodePath("../StageBarriers")
 guidance_display = NodePath("../FacilityHUD/GuidanceBoard/GuidanceDisplay")
 score_display = NodePath("../FacilityHUD/GuidanceBoard/ScoreDisplay")
 checkpoints_container = NodePath("../InspectionCheckpoints")
+
+[node name="SimulatorHUDOverlay" parent="." instance=ExtResource("14_hud")]
+
+[node name="PenaltyToastHUD" parent="." instance=ExtResource("15_toast")]
+
+[node name="VRPauseMenu" parent="." instance=ExtResource("17_pause")]
+
+[node name="ResultsScreen" parent="." instance=ExtResource("18_results")]
+
+[node name="MainMenu" parent="." instance=ExtResource("19_menu")]

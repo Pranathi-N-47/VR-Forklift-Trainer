@@ -1,0 +1,267 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1g4v6m2p8n3q"]
+
+[ext_resource type="Script" path="res://Scripts/UI/vr_pause_menu.gd" id="1_pause"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/click.wav" id="2_click"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_overlay"]
+bg_color = Color(0, 0, 0, 0.82)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.08, 0.08, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+
+[node name="VRPauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 10
+script = ExtResource("1_pause")
+
+[node name="Backdrop" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_overlay")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(660, 480)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/ModalPanel/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "SIMULATOR PAUSED / SETTINGS"
+
+[node name="CloseHint" type="Label" parent="CenterContainer/ModalPanel/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "[Esc / Tab to Close]"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Session" type="MarginContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 0
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Session"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnResume" type="Button" parent="CenterContainer/ModalPanel/VBox/TabContainer/Session/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "RESUME TRAINING"
+
+[node name="BtnRestartStage" type="Button" parent="CenterContainer/ModalPanel/VBox/TabContainer/Session/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "Restart Current Stage"
+
+[node name="BtnRestartAll" type="Button" parent="CenterContainer/ModalPanel/VBox/TabContainer/Session/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "Restart Entire Training Session"
+
+[node name="Comfort" type="MarginContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 1
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SnapTurnRow" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox/SnapTurnRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "VR Snap-Turn Angle:"
+
+[node name="OptionSnap" type="OptionButton" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox/SnapTurnRow"]
+custom_minimum_size = Vector2(160, 36)
+layout_mode = 2
+
+[node name="MouseSensRow" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox/MouseSensRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "Mouse Look Sensitivity:"
+
+[node name="SliderSens" type="HSlider" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox/MouseSensRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.5
+max_value = 5.0
+step = 0.1
+value = 2.0
+
+[node name="BtnRecalibrate" type="Button" parent="CenterContainer/ModalPanel/VBox/TabContainer/Comfort/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "Recalibrate Camera View Angle"
+
+[node name="Audio" type="MarginContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 2
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="MasterRow" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/MasterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "Master Volume:"
+
+[node name="SliderMaster" type="HSlider" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/MasterRow"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 4
+value = 80.0
+
+[node name="EngineRow" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/EngineRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "Forklift Engine & Lift SFX:"
+
+[node name="SliderEngine" type="HSlider" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/EngineRow"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 4
+value = 75.0
+
+[node name="UIRow" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/UIRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "UI Chimes & Warning Buzzers:"
+
+[node name="SliderUI" type="HSlider" parent="CenterContainer/ModalPanel/VBox/TabContainer/Audio/VBox/UIRow"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 4
+value = 85.0
+
+[node name="Controls" type="MarginContainer" parent="CenterContainer/ModalPanel/VBox/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 3
+
+[node name="Text" type="Label" parent="CenterContainer/ModalPanel/VBox/TabContainer/Controls"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "TRAINING SIMULATOR KEYBINDINGS:
+
+• W / S          : Throttle Forward / Reverse
+• A / D          : Rear-Wheel Pivot Steering
+• R / F          : Mast Raise / Lower
+• T / G          : Mast Tilt Forward / Backward
+• E / Spacebar   : Enter / Exit Forklift Cab
+• H              : Forklift Safety Horn
+• Spacebar       : Hand Brake
+• Q / E          : Snap Turn Left / Right (Walking)
+• F1             : Toggle On-Screen Helper Card
+• Esc / Tab      : Toggle this Settings Menu"
+
+[node name="ClickSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_click")
+bus = &"UI"

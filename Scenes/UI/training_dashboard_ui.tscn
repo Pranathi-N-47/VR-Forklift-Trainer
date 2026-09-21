@@ -1,0 +1,439 @@
+[gd_scene load_steps=6 format=3 uid="uid://b2x7d1m8n84v2"]
+
+[ext_resource type="Script" path="res://Scripts/UI/training_dashboard_ui.gd" id="1_dash"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dash_bg"]
+bg_color = Color(0.07, 0.07, 0.07, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cluster"]
+bg_color = Color(0.12, 0.12, 0.12, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gear"]
+bg_color = Color(0.16, 0.16, 0.16, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_warning"]
+bg_color = Color(0.85, 0.12, 0.12, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+
+[node name="TrainingDashboardUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1024.0
+offset_bottom = 600.0
+script = ExtResource("1_dash")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dash_bg")
+
+[node name="HeaderBar" type="HBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 48.0
+grow_horizontal = 2
+
+[node name="BrandLabel" type="Label" parent="Panel/HeaderBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "OSHA INDUSTRIAL FORKLIFT TELEMETRY SYSTEM"
+
+[node name="SysStatus" type="Label" parent="Panel/HeaderBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "● SIMULATOR ONLINE"
+
+[node name="LeftCluster" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 264.0
+offset_bottom = -90.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cluster")
+
+[node name="Title" type="Label" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 12.0
+offset_bottom = 35.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "DRIVE & SPEED"
+horizontal_alignment = 1
+
+[node name="SpeedRow" type="HBoxContainer" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 45.0
+offset_bottom = 115.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="SpeedValue" type="Label" parent="Panel/LeftCluster/SpeedRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 54
+text = " 0.0"
+horizontal_alignment = 2
+
+[node name="UnitLabel" type="Label" parent="Panel/LeftCluster/SpeedRow"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = " km/h"
+
+[node name="SpeedBar" type="ProgressBar" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 125.0
+offset_right = -20.0
+offset_bottom = 145.0
+grow_horizontal = 2
+max_value = 15.0
+step = 0.1
+value = 0.0
+show_percentage = false
+
+[node name="SpeedLimitLabel" type="Label" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 152.0
+offset_right = -20.0
+offset_bottom = 175.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "Warehouse Limit: 10.0 km/h"
+horizontal_alignment = 1
+
+[node name="GearTitle" type="Label" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 220.0
+offset_bottom = 243.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 15
+text = "TRANSMISSION"
+horizontal_alignment = 1
+
+[node name="GearRow" type="HBoxContainer" parent="Panel/LeftCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 250.0
+offset_right = -15.0
+offset_bottom = 320.0
+grow_horizontal = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="GearF" type="Label" parent="Panel/LeftCluster/GearRow"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_gear")
+text = "F"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GearN" type="Label" parent="Panel/LeftCluster/GearRow"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_gear")
+text = "N"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GearR" type="Label" parent="Panel/LeftCluster/GearRow"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_gear")
+text = "R"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterCluster" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -244.0
+offset_right = 230.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cluster")
+
+[node name="StageTitle" type="Label" parent="Panel/CenterCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 18.0
+offset_right = -16.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "STAGE 1: PRE-OPERATION INSPECTION"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Panel/CenterCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 65.0
+offset_right = -20.0
+offset_bottom = 75.0
+grow_horizontal = 2
+
+[node name="InstructionText" type="Label" parent="Panel/CenterCluster"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = -90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "Walk around the forklift and inspect all 4 mandatory yellow inspection checkpoints:
+• Mast & Forks
+• Tires & Lug Nuts
+• Rear Counterweight
+• Overhead Cab Guard"
+autowrap_mode = 2
+
+[node name="ScoreBox" type="PanelContainer" parent="Panel/CenterCluster"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -68.0
+offset_right = -20.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gear")
+
+[node name="ScoreText" type="Label" parent="Panel/CenterCluster/ScoreBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "OSHA Score: 100 / 100 [PASS]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightCluster" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -264.0
+offset_top = 56.0
+offset_right = -24.0
+offset_bottom = -90.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cluster")
+
+[node name="Title" type="Label" parent="Panel/RightCluster"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 12.0
+offset_bottom = 35.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "HYDRAULIC MAST & FORKS"
+horizontal_alignment = 1
+
+[node name="ForkBar" type="ProgressBar" parent="Panel/RightCluster"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -140.0
+offset_right = 25.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+fill_mode = 3
+show_percentage = false
+
+[node name="ForkValue" type="Label" parent="Panel/RightCluster"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -95.0
+offset_right = 80.0
+offset_bottom = -65.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "Ht: 0.00m"
+horizontal_alignment = 1
+
+[node name="TiltValue" type="Label" parent="Panel/RightCluster"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -60.0
+offset_right = 80.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "Tilt: 0.0°"
+horizontal_alignment = 1
+
+[node name="SafeZoneHint" type="Label" parent="Panel/RightCluster"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -25.0
+offset_right = 100.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.2, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "OSHA Safe Travel: ≤ 0.30m"
+horizontal_alignment = 1
+
+[node name="WarningBanner" type="PanelContainer" parent="Panel"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -75.0
+offset_right = -24.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_warning")
+
+[node name="WarningText" type="Label" parent="Panel/WarningBanner"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 28
+text = "WARNING: FORKS ELEVATED (>0.3M)!"
+horizontal_alignment = 1
+vertical_alignment = 1

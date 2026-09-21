@@ -65,8 +65,8 @@ func _ready() -> void:
 	_update_prompt("", false)
 
 	if not is_xr_active and enable_desktop_fallback:
-		# Start in desktop testing mode
-		_capture_mouse()
+		# Keep mouse visible at launch for menus and briefing cards
+		_release_mouse()
 
 
 ## Interface required by Forklift.gd BoardingArea
@@ -132,13 +132,13 @@ func _load_footstep_sounds() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	# Mouse capture toggle for desktop debugging
 	if event.is_action_pressed("Show Cursor"):
-		if _is_mouse_captured:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			_release_mouse()
 		else:
 			_capture_mouse()
 
-	# Desktop mouse look when not in VR
-	if not is_xr_active and _is_mouse_captured and event is InputEventMouseMotion:
+	# Desktop mouse look when not in VR - ONLY when mouse is actively captured!
+	if not is_xr_active and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseMotion:
 		_handle_mouse_look(event.relative)
 
 
