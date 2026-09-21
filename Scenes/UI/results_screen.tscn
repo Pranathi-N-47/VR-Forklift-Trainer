@@ -1,0 +1,180 @@
+[gd_scene load_steps=8 format=3 uid="uid://dm8k7y2w4q1v9"]
+
+[ext_resource type="Script" path="res://Scripts/UI/results_screen.gd" id="1_results"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/certification_pass.wav" id="2_pass"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/certification_fail.wav" id="3_fail"]
+[ext_resource type="AudioStream" path="res://Sounds/UI/click.wav" id="4_click"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_backdrop"]
+bg_color = Color(0, 0, 0, 0.85)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.07, 0.07, 0.07, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 32.0
+content_margin_top = 28.0
+content_margin_right = 32.0
+content_margin_bottom = 28.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.12, 0.12, 0.12, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0, 1)
+
+[node name="ResultsScreen" type="CanvasLayer"]
+layer = 12
+script = ExtResource("1_results")
+
+[node name="Backdrop" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Modal" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(740, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Modal"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="OrgHeader" type="Label" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "OSHA STANDARD 1910.178 • POWERED INDUSTRIAL TRUCK TRAINING"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 24
+text = "STAGE 7: OSHA CERTIFICATION & EVALUATION REPORT CARD"
+horizontal_alignment = 1
+
+[node name="StampBox" type="CenterContainer" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+
+[node name="GradeStamp" type="Label" parent="CenterContainer/Modal/VBox/StampBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 30
+text = "[PASS - OSHA CERTIFIED]"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+
+[node name="ScorecardBox" type="PanelContainer" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/Modal/VBox/ScorecardBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Modal/VBox/ScorecardBox/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SummaryLabel" type="Label" parent="CenterContainer/Modal/VBox/ScorecardBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
+text = "• Base Inspection Score : 100 Points
+• Net Safety Deductions : -0 Points
+• Final Operator Score   : 100 / 100 (Pass threshold: >= 70%)"
+
+[node name="InfractionsLabel" type="Label" parent="CenterContainer/Modal/VBox/ScorecardBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 15
+text = "Safety Infractions Recorded:
+• Traffic Cone Collisions: 0 occurrences (-0 points)
+• Unsafe Maneuvering Deductions: -0 points"
+
+[node name="TimeLabel" type="Label" parent="CenterContainer/Modal/VBox/ScorecardBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 15
+text = "Total Training Run Time: 03 min 45 sec"
+
+[node name="TipLabel" type="Label" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "(Tip for testing: Pressing number keys 1 through 7 on your keyboard allows quick jumping between any of the stages at any time)."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ButtonRow" type="HBoxContainer" parent="CenterContainer/Modal/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnRetry" type="Button" parent="CenterContainer/Modal/VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
+text = "RETAKE TRAINING"
+
+[node name="BtnQuit" type="Button" parent="CenterContainer/Modal/VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
+text = "EXIT SIMULATOR"
+
+[node name="SFXPass" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_pass")
+bus = &"UI"
+
+[node name="SFXFail" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_fail")
+bus = &"UI"
+
+[node name="SFXClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_click")
+bus = &"UI"

@@ -74,6 +74,7 @@ anchor_bottom = 1.0
 offset_top = -100.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 
 [node name="PromptLabel2D" type="Label" parent="HUD/CenterContainer"]
 visible = false

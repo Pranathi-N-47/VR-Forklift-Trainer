@@ -5,6 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://bsrj2ylh11ojl" path="res://Sounds/Lift/qubodup-edev.mp3" id="3_cfnbq"]
 [ext_resource type="AudioStream" path="res://Sounds/Forklift/reverse_beeper.wav" id="4_beeper"]
 [ext_resource type="AudioStream" path="res://Sounds/Forklift/horn.wav" id="5_horn"]
+[ext_resource type="PackedScene" uid="uid://b2x7d1m8n84v2" path="res://Scenes/UI/training_dashboard_ui.tscn" id="6_dash"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yow1m"]
 resource_name = "Body-Lower"
@@ -510,6 +511,19 @@ shadow_mesh = SubResource("ArrayMesh_pw2ej")
 [sub_resource type="BoxShape3D" id="BoxShape3D_carry"]
 size = Vector3(1, 0.35, 1)
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_dash"]
+viewport_path = NodePath("DashboardAnchor/DashboardViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dash"]
+resource_local_to_scene = true
+cull_mode = 2
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_dash")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dash"]
+material = SubResource("StandardMaterial3D_dash")
+size = Vector2(0.56, 0.32)
+
 [node name="Forklift" type="VehicleBody3D" unique_id=1500457038]
 mass = 1600.0
 center_of_mass_mode = 1
@@ -685,7 +699,18 @@ volume_db = 0.0
 max_distance = 35.0
 
 [node name="DashboardAnchor" type="Marker3D" parent="." unique_id=1870011155]
-transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.88, 0.42)
+transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.96, 0.45)
+
+[node name="DashboardViewport" type="SubViewport" parent="DashboardAnchor"]
+disable_3d = true
+size = Vector2i(1024, 600)
+render_target_update_mode = 4
+
+[node name="TrainingDashboardUI" parent="DashboardAnchor/DashboardViewport" instance=ExtResource("6_dash")]
+
+[node name="DashboardMesh" type="MeshInstance3D" parent="DashboardAnchor"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = SubResource("QuadMesh_dash")
 
 [connection signal="body_entered" from="BoardingArea" to="." method="_on_boarding_area_body_entered"]
 [connection signal="body_exited" from="BoardingArea" to="." method="_on_boarding_area_body_exited"]

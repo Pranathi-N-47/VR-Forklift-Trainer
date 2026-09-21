@@ -1,0 +1,120 @@
+[gd_scene load_steps=4 format=3 uid="uid://dp6m3v1w8yq5r"]
+
+[ext_resource type="Script" path="res://Scripts/UI/simulator_hud_overlay.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.08, 0.08, 0.08, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
+bg_color = Color(0.08, 0.08, 0.08, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0, 1)
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+
+[node name="SimulatorHUDOverlay" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_hud")
+
+[node name="TopLeftStatus" type="PanelContainer" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 440.0
+offset_bottom = 115.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_status")
+
+[node name="VBox" type="VBoxContainer" parent="TopLeftStatus"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StageLabel" type="Label" parent="TopLeftStatus/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 17
+text = "Stage 1: Pre-Operation Inspection"
+
+[node name="ScoreLabel" type="Label" parent="TopLeftStatus/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 17
+text = "OSHA Score: 100 / 100 [PASS]"
+
+[node name="TelemetryLabel" type="Label" parent="TopLeftStatus/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "Speed: 0.0 km/h | Gear: [N] | Forks: 0.00m"
+
+[node name="ControlsCard" type="PanelContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -310.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 270.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="ControlsCard"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="ControlsCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="ControlsCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="ControlsCard/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 15
+text = "CONTROLS GUIDE"
+
+[node name="ToggleHint" type="Label" parent="ControlsCard/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "[F1 Hide]"
+
+[node name="HSeparator" type="HSeparator" parent="ControlsCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="KeysText" type="Label" parent="ControlsCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "• [W / S] : Throttle / Reverse
+• [A / D] : Steer (Rear-Wheel Pivot)
+• [R / F] : Raise / Lower Forks
+• [T / G] : Tilt Mast Back / Forward
+• [E] : Mount / Dismount Cab
+• [Space] : Hand Brake
+• [H] : Horn
+• [Esc / Tab] : Pause / Settings"
